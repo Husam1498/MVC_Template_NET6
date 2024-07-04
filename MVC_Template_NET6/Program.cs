@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MVC_Template_NET6.Entity;
 
@@ -17,6 +18,19 @@ namespace MVC_Template_NET6
                 //opts.UseLazyLoadingProxies();
             });
 
+            builder.Services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(opts =>
+                {
+                    opts.Cookie.Name = "MVC_Template_NET6.auth";
+                    opts.ExpireTimeSpan=TimeSpan.FromDays(7);
+                    opts.SlidingExpiration = false;
+                    opts.LoginPath = "/Account/Login"; 
+                    opts.LogoutPath = "/Account/Logout";
+                    opts.AccessDeniedPath = "/Home/AccesDenied";
+                });
+                
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -28,6 +42,7 @@ namespace MVC_Template_NET6
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

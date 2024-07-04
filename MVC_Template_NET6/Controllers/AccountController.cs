@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using MVC_Template_NET6.Entity;
 using MVC_Template_NET6.Models;
 using NETCore.Encrypt.Extensions;
+using System.Security.Claims;
 
 namespace MVC_Template_NET6.Controllers
 {
@@ -26,7 +29,31 @@ namespace MVC_Template_NET6.Controllers
         {
             if(ModelState.IsValid)
             {
-                //Login işlemleri
+                User user=_databaseContext.Users.SingleOrDefault(x=> x.Username.ToLower()==model.Username.ToLower() && x.Password==MD5Hashed(model.Password));
+                if (user != null)
+                {
+                    if (user.Locked)
+                    {
+                        ModelState.AddModelError("", "Giriş başarısız aktif üyeliğiniz bitmiştir, müşteri temsilcisi ile göürüşünüz");
+                        return View(model);
+                    }
+
+                    List<Claim> claims = new List<Claim>();
+                    claims.Add(new Claim("Id", user.Id.ToString()));
+                    claims.Add(new Claim("Fullname", user.Fullname.ToString()));
+                    claims.Add(new Claim("Username", user.Username.ToString()));
+
+                    ClaimsIdentity identity = new ClaimsIdentity(claims,CookieAuthenticationDefaults.AuthenticationScheme);
+                    ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+                    HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,principal);
+                    return RedirectToAction("Index", "Home");
+
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Giriş başarısız bilgilerini kontrol et lütfen");
+                }
+            
             }
             return View(model);
         }
@@ -40,7 +67,13 @@ namespace MVC_Template_NET6.Controllers
         public IActionResult Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
-            {               
+            {      
+                if(_databaseContext.Users.Any(x=> x.Username.ToLower()==model.Username.ToLower()))
+                {
+                    ModelState.AddModelError(nameof(model.Username), "User eklenemedi kullanıcı var");
+                    return View(model);
+
+                }
                 User user = new()
                 {
                     Fullname = model.Fullname,
@@ -58,7 +91,7 @@ namespace MVC_Template_NET6.Controllers
                     return RedirectToAction(nameof(Login));
                 }
             }
-            return View();
+            return View(model);
         }
 
         public IActionResult Profile()
