@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Template_NET6.Entity;
 using MVC_Template_NET6.Models;
@@ -94,9 +95,17 @@ namespace MVC_Template_NET6.Controllers
             return View(model);
         }
 
+        [Authorize]
         public IActionResult Profile()
         {
             return View();
+        }
+        [Authorize]
+        public IActionResult Logout()
+        {
+
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction(nameof(Login));
         }
 
         public string MD5Hashed(string sifre)
