@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using MVC_Template_NET6.Entity;
+
 namespace MVC_Template_NET6
 {
     public class Program
@@ -8,6 +11,11 @@ namespace MVC_Template_NET6
 
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            builder.Services.AddDbContext<DatabaseContext>(opts =>
+            {
+                opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                //opts.UseLazyLoadingProxies();
+            });
 
             var app = builder.Build();
 
