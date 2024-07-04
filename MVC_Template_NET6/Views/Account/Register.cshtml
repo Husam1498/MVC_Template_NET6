@@ -1,6 +1,6 @@
-﻿@model LoginViewModel
+﻿@model RegisterViewModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Register";
 }
 
 <div class="row">
@@ -14,6 +14,11 @@
        <form method="post">
 
            <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+            <div class="form-group mb-3">
+                <label asp-for="Fullname" class="form-label">Fullname</label>
+                <input asp-for="Fullname" class="form-control" placeholder="Ahmet demir" />
+                <span asp-validation-for="Fullname" class="text-danger small"></span>
+            </div>
            <div class="form-group mb-3">
                <label asp-for="Username" class="form-label">Username</label>
                 <input asp-for="Username" class="form-control" placeholder="Ahmet" />
@@ -25,9 +30,14 @@
                 <input asp-for="Password" type="password" class="form-control" placeholder="P@ssw0rd!" />
                 <span asp-validation-for="Password" class="text-danger small"></span>
            </div>
+            <div class="form-group mb-3">
+                <label asp-for="RePassword" class="form-label">RePassword</label>
+                <input asp-for="RePassword" type="password" class="form-control" placeholder="P@ssw0rd!" />
+                <span asp-validation-for="RePassword" class="text-danger small"></span>
+            </div>
 
            <div class="form-group d-grid mb-3">
-                <button class="btn btn-primary d-block" type="submit"><i class="fa-solid fa-right-to-bracket me-2"></i>Login</button>
+                <button class="btn btn-primary d-block" type="submit"><i class="fa-solid fa-paper-plane me-2"></i>Register</button>
            </div>
 
        </form>
