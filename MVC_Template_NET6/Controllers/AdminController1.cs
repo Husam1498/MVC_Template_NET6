@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MVC_Template_NET6.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="admin")]
     public class AdminController1 : Controller
     {
         public IActionResult Index()

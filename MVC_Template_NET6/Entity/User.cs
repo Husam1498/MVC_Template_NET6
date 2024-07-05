@@ -23,6 +23,11 @@ namespace MVC_Template_NET6.Entity
         public bool Locked { get; set; } = true;
 
         public DateTime MyProperty { get; set; } = DateTime.Now;
+
+        [Required]
+        [StringLength(20)]
+        public string Role { get; set; } = "user";
+
     }
 
 }

@@ -43,6 +43,7 @@ namespace MVC_Template_NET6.Controllers
                     claims.Add(new Claim("Id", user.Id.ToString()));
                     claims.Add(new Claim("Fullname", user.Fullname.ToString()));
                     claims.Add(new Claim("Username", user.Username.ToString()));
+                    claims.Add(new Claim("Role", user.Role.ToString()));
 
                     ClaimsIdentity identity = new ClaimsIdentity(claims,CookieAuthenticationDefaults.AuthenticationScheme);
                     ClaimsPrincipal principal = new ClaimsPrincipal(identity);
