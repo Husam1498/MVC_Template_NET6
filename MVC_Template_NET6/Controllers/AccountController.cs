@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using MVC_Template_NET6.Entity;
 using MVC_Template_NET6.Models;
 using NETCore.Encrypt.Extensions;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace MVC_Template_NET6.Controllers
@@ -41,7 +42,7 @@ namespace MVC_Template_NET6.Controllers
 
                     List<Claim> claims = new List<Claim>();
                     claims.Add(new Claim("Id", user.Id.ToString()));
-                    claims.Add(new Claim("Fullname", user.Fullname.ToString()));
+                    claims.Add(new Claim(ClaimTypes.Name, user.Fullname));
                     claims.Add(new Claim("Username", user.Username.ToString()));
                     claims.Add(new Claim(ClaimTypes.Role, user.Role));
 
@@ -99,8 +100,51 @@ namespace MVC_Template_NET6.Controllers
         [Authorize]
         public IActionResult Profile()
         {
+           Guid userId = new Guid(User.FindFirstValue("Id"));
+            User user = _databaseContext.Users.SingleOrDefault(x => x.Id == userId);
+            ViewData["Fullname"] = user.Fullname;
+
             return View();
         }
+
+        [HttpPost]
+        public IActionResult ProfileChangeFullname([Required][StringLength(50)] string fullname)
+        {
+
+            if (ModelState.IsValid)
+            {
+                Guid userId = new Guid(User.FindFirstValue("Id"));
+                User user= _databaseContext.Users.SingleOrDefault(x=> x.Id==userId);
+
+                user.Fullname= fullname;
+                _databaseContext.SaveChanges();
+                return RedirectToAction(nameof(Profile));
+
+            }
+
+
+            return View(nameof(Profile));
+        }
+        [HttpPost]
+        public IActionResult ProfileChangePassword([Required][MinLength(4)] [MaxLength(8)] string password)
+        {
+
+            if (ModelState.IsValid)
+            {
+                Guid userId = new Guid(User.FindFirstValue("Id"));
+                User user = _databaseContext.Users.SingleOrDefault(x => x.Id == userId);
+
+                user.Password = MD5Hashed(password);
+                _databaseContext.SaveChanges();
+
+                ViewData["result"] = "PasswordChange";
+
+            }
+
+
+            return View(nameof(Profile));
+        }
+
         [Authorize]
         public IActionResult Logout()
         {
