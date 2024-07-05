@@ -38,10 +38,7 @@
                     <button class="btn btn-secondary" type="submit"><i class="fa-solid fa-floppy-disk me-2"></i>Save</button>
                 </div>
             </div>
-            @if (ViewData["result"]!= null && ViewData["result"] == "PasswordChange")
-            {
-                <span class="text-success small">şifre değiştirldi</span>
-            }
+           
             
             
 
@@ -49,4 +46,14 @@
 
     </div>
 </div>
+
+
+@section Scripts{
+    @if (ViewData["result"] != null && ViewData["result"] == "PasswordChange" ) 
+    {
+        <script>
+            toastr["info"]("Şifreniz değiştirlmiştir", "Şİfre ")
+        </script>
+    }
+}
 
